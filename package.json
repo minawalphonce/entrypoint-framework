@@ -1,0 +1,18 @@
+{
+  "name": "entrypoint-framework",
+  "version": "1.0.0",
+  "author": "Mina W Alphonce",
+  "license": "MIT",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "packages/cloud-providers/*"
+  ],
+  "packageManager": "yarn@1.22.4",
+  "scripts": {
+    "cli": "yarn workspace @entrypoint-framework/cli",
+    "core": "yarn workspace @entrypoint-framework/cloud-core",
+    "aws": "yarn workspace @entrypoint-framework/aws-cloud-provider"
+  },
+  "dependencies": {}
+}

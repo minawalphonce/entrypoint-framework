@@ -1,0 +1,50 @@
+import { Context, S3Event,
+         APIGatewayProxyEventV2WithJWTAuthorizer,
+         ScheduledEvent
+} from "aws-lambda";
+
+import { createRouter, httpMatcher, scheduleMatcher } from "@anubis/cloud-provider";
+import { functions } from "@anubis/aws-cloud-provider";
+import { initialize } from "@anubis/datastore";
+import { logger } from "@anubis/utils";
+
+import * as src from "../../packages/components/<%=component%>/src";
+
+type AWSEventType = S3Event | APIGatewayProxyEventV2WithJWTAuthorizer | ScheduledEvent;
+
+const router = createRouter();
+<%_ for(var [key,entry] of Object.entries(entries)) { _%>
+    <%_ if(entry.trigger.type.toLowerCase() === "http") { _%>
+router.add(httpMatcher("<%=entry.trigger.options.method%>", "<%=entry.trigger.options.route%>"), src["<%= entry.handler %>"])
+    <%_ } _%>
+    <%_ if(entry.trigger.type.toLowerCase() === "schedule") { _%>
+router.add(scheduleMatcher("<%= key %>"), src["<%= entry.handler %>"])
+    <%_ } _%>
+<%_ } _%>
+
+export async function handler(event: AWSEventType, context: Context) {
+    logger.initialize("locations", context.awsRequestId);
+    logger.info("request started");
+    logger.debug({ event }, "Received event");
+
+    try {
+        await initialize();
+        let output = null;
+        if ("rawPath" in event) {
+            output = await router.run("Http", functions.httpAdapter, event, context);
+        }
+        else if ("source" in event) {
+            output = await router.run("Schedule", functions.scheduleAdapter, event, context);
+        }
+        else {
+            throw new Error("invalid handler");
+        }
+        logger.debug({ output }, "Response Sent");
+        logger.info("request completed");
+        return output;
+    }
+    catch (error) {
+        logger.error({ error }, "Error occurred");
+        throw error;
+    }
+}
