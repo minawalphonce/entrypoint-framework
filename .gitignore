@@ -105,3 +105,6 @@ public
 
 # Mac system files
 .DS_Store
+
+# ignore all contents of any .epf directory
+**/.epf/*
