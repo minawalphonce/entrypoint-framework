@@ -73,15 +73,17 @@ export async function loadConfig(
 
     const result = rechoir.prepare(extensions, configFile);
     if (result === true || (Array.isArray(result) && result.length === 0)) {
-
         // Successfully loaded
         const ext = path.extname(configFile);
+
+        const osSpecificImportPath = (process.platform === "win32") ? "file:///" : "";
         let rawConfig;
         if (ext === ".json") {
-            rawConfig = await import(configFile, { assert: { type: "json" } });
+            rawConfig = await import(osSpecificImportPath + configFile);
         }
-        else
-            rawConfig = await import(configFile);
+        else{
+            rawConfig = await import(osSpecificImportPath + configFile);
+        }
 
         rawConfig = await resolveConfig(rawConfig.default);
         // Merge with default config to ensure all fields exist

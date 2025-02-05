@@ -26,7 +26,7 @@ export const transformModule: Task = {
     }) => {
         const entrypointContent = await fs.readFile(entrypointPath, "utf-8");
         const rendered = moduleTemplateFunc({
-            source,
+            source: (process.platform === "win32") ? source.replace(/\\/g, "/") : source,
             module: moduleName,
             ...JSON.parse(entrypointContent),
             ...helpers
