@@ -28,7 +28,7 @@ export const useTaskManager = create<TaskManagerStore>()(immer(
 
                 set(() => ({ isRunning: false, currentTaskId: null }));
 
-                //await taskManager.watch();
+                await taskManager.watch();
             },
 
 
