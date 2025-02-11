@@ -11,6 +11,13 @@ export const useTaskManager = create<TaskManagerStore>()(immer(
             currentTaskId: null,
             environment: 'development',
             isRunning: false,
+            isWatching: false,
+            selectedModule: null,
+            selectedEndpoint: null,
+            modules: [
+                { id: 'module1', name: 'Module 1', endpoints: ['/endpoint1', '/endpoint2'] },
+                { id: 'module2', name: 'Module 2', endpoints: ['/endpoint3', '/endpoint4'] },
+            ],
 
             start: async (config: Config, env: string) => {
                 const taskManager = new TaskManager(config, env);
@@ -27,8 +34,8 @@ export const useTaskManager = create<TaskManagerStore>()(immer(
                 await taskManager.execute();
 
                 set(() => ({ isRunning: false, currentTaskId: null }));
-
                 await taskManager.watch();
+                set(() => ({ isWatching: true }));
             },
 
 
@@ -79,7 +86,10 @@ export const useTaskManager = create<TaskManagerStore>()(immer(
                     if (!task) return state;
                     task.logs = [...task.logs, log];
                 });
-            }
+            },
+            selectModule: (id: string) => set({ selectedModule: id }),
+            selectEndpoint: (endpoint: string) => set({ selectedEndpoint: endpoint }),
+            resetSelection: () => set({ selectedModule: null, selectedEndpoint: null }), // Reset both select
         }
     }));
 

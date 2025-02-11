@@ -102,6 +102,13 @@ export type Args = {
     }
 }
 
+type Module = {
+    id: string;
+    name: string;
+    endpoints: string[];
+}
+
+
 //=================================
 
 export type TaskStatus = 'pending' | 'running' | 'completed' | 'error' | 'skipped';
@@ -121,11 +128,18 @@ export interface TaskManagerStore {
     currentTaskId: string | null;
     environment: string;
     isRunning: boolean;
-
+    isWatching: boolean;
+    modules: Module[];
+    selectedModule: string | null;
+    selectedEndpoint: string | null,
     // Actions
     start: (config: Config, env: string) => Promise<void>;
 
     addTask: (task: { id: string, title: string, parentTaskId?: string }) => void;
     updateTaskStatus: (taskId: string, status: TaskStatus, error?: string) => void;
     addTaskLog: (taskId: string, log: any) => void;
+
+    selectModule: (id: string) => void;
+    selectEndpoint: (endpoint: string) => void;
+    resetSelection: () => void; // New action to reset selections
 }
