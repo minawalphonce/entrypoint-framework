@@ -7,6 +7,7 @@
       url: `/http<%= $$convertRouteParamstoFastifyRouteTemplate(entry.trigger.options.route) %>`,
       handler: async function (request, reply) {
         const baseAddress = app.server.address() as AddressInfo;
+        const routePath = `/http<%= $$convertRouteParamstoFastifyRouteTemplate(entry.trigger.options.route) %>`;
         const ctx = createHttpContext({
             body: request.rawBody as string,
             headers: request.headers,

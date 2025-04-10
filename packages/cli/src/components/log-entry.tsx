@@ -2,6 +2,19 @@ import React, { FC } from "react";
 import { Box, Text } from "ink";
 
 export const LogEntry: FC<{ log: any }> = ({ log }) => {
+    if (typeof log !== 'string' && 'text' in log && 'data' in log) {
+        // Handle custom message
+        return (
+            <Box flexDirection="column">
+                <Text color={log.color || 'white'}>
+                    {log.text}
+                </Text>
+                {log.data && (
+                    <Text dimColor>{JSON.stringify(log.data)}</Text>
+                )}
+            </Box>);
+    }
+
     if (typeof log !== 'string' && 'text' in log) {
         // Handle esbuild message
         const location = log.location ? `${log.location.file}:${log.location.line}:${log.location.column}` : '';

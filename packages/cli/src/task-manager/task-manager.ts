@@ -3,7 +3,7 @@ import path from "node:path";
 
 import { Config, Task, TaskParam } from "../types.js";
 
-type EVENTS = "new" | "start" | "success" | "failure" | "skip" | "log";
+type EVENTS = "new" | "start" | "success" | "failure" | "skip" | "log" | "APP_REGISTERED" | "ROUTE_REGISTERED" | "LISTENING" | "ERROR" | "REQUEST" | "RESPONSE" | "LOG";
 
 export class TaskManager {
     private config: Config;
@@ -92,16 +92,24 @@ export class TaskManager {
             return results;
         };
 
-        const logger = (arg: any) => {
+        const logger = (arg: any, data?: any) => {
             this.events.emit("log", {
                 id: taskId,
-                log: arg
+                log: arg,
+                data
             });
         };
 
+        const eventEmitter = (type: string, data?: any) => {
+            this.events.emit(type, {
+                id: taskId,
+                data
+            })
+        }
+
         // Execute the task action
         try {
-            const result = await task.action(taskParams, logger, executeSubTasks);
+            const result = await task.action(taskParams, logger, eventEmitter, executeSubTasks);
 
             // Store result for next tasks if it's a top-level task
             if (!parentTaskId) {

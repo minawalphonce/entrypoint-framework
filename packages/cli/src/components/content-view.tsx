@@ -6,7 +6,7 @@ import { useTaskManager } from '../store/index.js';
 const ContentView: React.FC = () => {
     const { selectedModule, selectedEndpoint, modules, selectEndpoint } = useTaskManager();
     const module = modules.find((a) => a.id === selectedModule);
-    const selectedIndex = module?.endpoints.findIndex((e) => e === selectedEndpoint) ?? -1;
+    const selectedIndex = module?.endpoints.findIndex((e) => (e.url === selectedEndpoint?.url && e.method === selectedEndpoint?.method)) ?? -1;
 
     // Sample logs (replace with real logs)
     const [logs, setLogs] = useState([
@@ -47,9 +47,9 @@ const ContentView: React.FC = () => {
                     module.endpoints.map((endpoint, index) => (
                         <Text
                             key={index}
-                            color={selectedEndpoint === endpoint ? 'cyan' : 'white'}
+                            color={(selectedEndpoint?.url === endpoint.url && endpoint.method === selectedEndpoint?.method) ? 'cyan' : 'white'}
                         >
-                            {endpoint}
+                            {endpoint.method}   -   {endpoint.url}
                         </Text>
                     ))
                 ) : (
@@ -61,7 +61,7 @@ const ContentView: React.FC = () => {
             {selectedEndpoint && (
                 <Box flexDirection="column" borderStyle="round" borderColor="gray">
                     <Text bold color="yellow">
-                        Logs for {selectedEndpoint}:
+                        Logs for {selectedEndpoint.method} - {selectedEndpoint.url}:
                     </Text>
                     {displayedLogs.map((log, index) => (
                         <Text key={index}>{log}</Text>
