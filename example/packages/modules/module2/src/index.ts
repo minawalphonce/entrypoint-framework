@@ -1,13 +1,14 @@
-export function getMe() {
+import { HttpFunctionContext } from "@@cloudecore";
+export function getMe(ctx: HttpFunctionContext) {
 
-    console.info('getMe from module2');
-    return {
-        name: 'module2',
-        version: '1.0.0'
-    };
+    ctx.success({
+        message: 'Hello from module2 -> getMe'
+    });
 }
 
-export function setMe() {
+export function setMe(ctx: HttpFunctionContext) {
     console.info('getMe from module2');
-
+    ctx.error({
+        msg: 'Error from module2 -> SetMe'
+    });
 }
