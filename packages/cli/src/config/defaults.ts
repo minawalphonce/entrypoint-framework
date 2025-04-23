@@ -35,7 +35,6 @@ export const defaultConfig: Config = {
                 loadModuleTemplate,
                 loadTriggerTemplate,
                 locateModules,
-                // transformModule
             ],
             cloudProvider: {
                 type: "aws",

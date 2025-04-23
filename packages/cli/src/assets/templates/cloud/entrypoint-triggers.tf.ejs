@@ -27,7 +27,7 @@ data "aws_apigatewayv2_apis" "this" {
 <% const httpEntries = Object.entries(entries).filter(([k,e]) => e.trigger.type.toLowerCase() === "http")  %>
 <% if(httpEntries.length > 0) { %>
 module "http_trigger_for_<%= module %>" {
-  source         = "../../.deploy/aws/http"
+  source         = "../../../.deploy/aws/http"
   api_gateway_id = sort(data.aws_apigatewayv2_apis.this.ids)[0]
   lambda_arn     = data.aws_lambda_function.this.arn
   lambda_name    =   "<%= module %>"
@@ -47,7 +47,7 @@ module "http_trigger_for_<%= module %>" {
 <% const scheduleEntries = Object.entries(entries).filter(([k,e]) => e.trigger.type.toLowerCase() === "schedule") %>
 <% if(scheduleEntries.length > 0) { %>
 module "schedule_trigger_for_<%= module %>" {
-   source              = "../../.deploy/aws/scheduler"
+   source              = "../../../.deploy/aws/scheduler"
    component           = "<%= module %>"
    target_arn          = data.aws_lambda_function.this.arn
    schedules = {
