@@ -1,4 +1,5 @@
 import { HttpFunctionContext } from "@@cloudecore";
+
 export function getMe(ctx: HttpFunctionContext) {
 
     ctx.success({
