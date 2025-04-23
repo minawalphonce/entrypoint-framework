@@ -1,6 +1,6 @@
 import { DataSource, ObjectLiteral, EntitySchema, Repository, EntityManager } from "typeorm";
 import { IsolationLevel } from "typeorm/driver/types/IsolationLevel";
-import { logger } from "@anubis/utils";
+import { logger } from "@entrypoint-framework/utils";
 
 import { config } from "./config";
 import * as entities from "./entities";

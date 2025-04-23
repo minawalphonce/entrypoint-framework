@@ -4,3 +4,5 @@ export * from "./locate-modules.js";
 export * from "./transform-dev-server.js";
 export * from "./transform-module.js";
 export * from "./dev-server-watch.js";
+export * from "./load-trigger-template.js";
+export * from "./transform-trigger-template.js";

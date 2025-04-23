@@ -2,7 +2,7 @@ import type { MysqlConnectionOptions } from "typeorm/driver/mysql/MysqlConnectio
 import type { SqliteConnectionOptions } from "typeorm/driver/sqlite/SqliteConnectionOptions";
 import type { PostgresConnectionOptions } from "typeorm/driver/postgres/PostgresConnectionOptions";
 
-import { env } from "@anubis/utils";
+import { env } from "@entrypoint-framework/utils";
 
 const type = env('DATABASE_TYPE', 'mysql') as keyof typeof connections;
 

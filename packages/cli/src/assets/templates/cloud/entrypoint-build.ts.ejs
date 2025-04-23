@@ -3,12 +3,12 @@ import { Context, S3Event,
          ScheduledEvent
 } from "aws-lambda";
 
-import { createRouter, httpMatcher, scheduleMatcher } from "@anubis/cloud-provider";
-import { functions } from "@anubis/aws-cloud-provider";
-import { initialize } from "@anubis/datastore";
-import { logger } from "@anubis/utils";
+import { createRouter, httpMatcher, scheduleMatcher } from "@@cloudcore";
+import { functions } from "@@cloud";
+import { initialize } from "@@datastore";
+import { logger } from "@@utils";
 
-import * as src from "../../packages/components/<%=component%>/src";
+import * as src from "../../../packages/modules/<%=module%>/src";
 
 type AWSEventType = S3Event | APIGatewayProxyEventV2WithJWTAuthorizer | ScheduledEvent;
 

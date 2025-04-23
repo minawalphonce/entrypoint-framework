@@ -18,6 +18,6 @@
     },
     "scripts": {
         "start": "epf develop",
-        "build": "epf prod"
+        "build": "epf production"
     }
 }

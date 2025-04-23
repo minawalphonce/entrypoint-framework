@@ -7,6 +7,8 @@ import {
     transformDevServer,
     devServerWatch,
     transformModule,
+    loadTriggerTemplate,
+    transformTriggerTemplate,
 } from "../task-manager/index.js";
 
 
@@ -26,13 +28,18 @@ export const defaultConfig: Config = {
             ],
             watch: devServerWatch
         },
-        prod: {
-            moduleTemplatePath: "./templates/cloud/module.ts.ejs",
+        production: {
+            moduleTemplatePath: "./templates/cloud/entrypoint-build.ts.ejs",
+            triggerTemplatePath: "./templates/cloud/entrypoint-triggers.tf.ejs",
             tasks: [
                 loadModuleTemplate,
-                //locateModule,
-                transformModule
-            ]
+                loadTriggerTemplate,
+                locateModules,
+                // transformModule
+            ],
+            cloudProvider: {
+                type: "aws",
+            }
         }
 
     }
