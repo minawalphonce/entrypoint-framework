@@ -12,7 +12,7 @@ import { locateSourceEntry } from "./locate-source-entry.js";
 export const locateModules: Task = {
     title: "load all entrypoints.json",
     skip: () => false,
-    action: async (params, _, executeSubTasks) => {
+    action: async (params, _logger, _eventEmitter, executeSubTasks) => {
         const entrypoints = await fg(params.modulesPath);
         const moduleNames = entrypoints.map((entrypoint) => path.basename(path.dirname(entrypoint)));
         let output = {

@@ -10,123 +10,13 @@
                 }
             }
         },
-        "update-me": {
-            "handler": "updateMe",
+        "set-me": {
+            "handler": "setMe",
             "trigger": {
                 "type": "http",
                 "options": {
-                    "method": "PUT",
+                    "method": "POST",
                     "route": "/v1/me"
-                }
-            }
-        },
-        "get-my-vehicles": {
-            "handler": "getVehiclesList",
-            "trigger": {
-                "type": "http",
-                "options": {
-                    "method": "GET",
-                    "route": "/v1/me/vehicles"
-                }
-            }
-        },
-        "get-my-vehicle": {
-            "handler": "getVehicle",
-            "trigger": {
-                "type": "http",
-                "options": {
-                    "method": "GET",
-                    "route": "/v1/me/vehicles/{id}"
-                }
-            }
-        },
-        "create-my-vehicle": {
-            "handler": "createVehicle",
-            "trigger": {
-                "type": "http",
-                "options": {
-                    "method": "POST",
-                    "route": "/v1/me/vehicles"
-                }
-            }
-        },
-        "update-my-vehicle": {
-            "handler": "updateVehicle",
-            "trigger": {
-                "type": "http",
-                "options": {
-                    "method": "PUT",
-                    "route": "/v1/me/vehicles/{id}"
-                }
-            }
-        },
-        "delete-my-vehicle": {
-            "handler": "deleteVehicle",
-            "trigger": {
-                "type": "http",
-                "options": {
-                    "method": "DELETE",
-                    "route": "/v1/me/vehicles/{id}"
-                }
-            }
-        },
-        "get-my-invoices": {
-            "handler": "getInvoices",
-            "trigger": {
-                "type": "http",
-                "options": {
-                    "method": "GET",
-                    "route": "/v1/me/invoices"
-                }
-            }
-        },
-        "get-economy-report": {
-            "handler": "economyReport",
-            "trigger": {
-                "type": "http",
-                "options": {
-                    "method": "GET",
-                    "route": "/v1/me/report/economy"
-                }
-            }
-        },
-        "get-forecast-report": {
-            "handler": "forecastReport",
-            "trigger": {
-                "type": "http",
-                "options": {
-                    "method": "GET",
-                    "route": "/v1/me/report/forecast"
-                }
-            }
-        },
-        "get-payment-methods": {
-            "handler": "getPaymentMethods",
-            "trigger": {
-                "type": "http",
-                "options": {
-                    "method": "GET",
-                    "route": "/v1/me/payment-methods"
-                }
-            }
-        },
-        "create-payment-method": {
-            "handler": "addPaymentMethod",
-            "trigger": {
-                "type": "http",
-                "options": {
-                    "method": "POST",
-                    "route": "/v1/me/payment-methods"
-                }
-            }
-        },
-        "remove-payment-method": {
-            "handler": "removePaymentMethod",
-            "trigger": {
-                "type": "http",
-                "options": {
-                    "method": "DELETE",
-                    "route": "/v1/me/payment-methods/{id}"
                 }
             }
         }

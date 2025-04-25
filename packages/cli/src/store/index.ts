@@ -11,7 +11,14 @@ export const useTaskManager = create<TaskManagerStore>()(immer(
             currentTaskId: null,
             environment: 'development',
             isRunning: false,
-
+            isListening: false,
+            selectedModule: null,
+            selectedEndpoint: null,
+            modules: [],
+            port: '',
+            host: '',
+            logs: [],
+            pinoLogs: [],
             start: async (config: Config, env: string) => {
                 const taskManager = new TaskManager(config, env);
 
@@ -22,13 +29,21 @@ export const useTaskManager = create<TaskManagerStore>()(immer(
                 taskManager.on("success", ({ id }) => get().updateTaskStatus(id, "completed"));
                 taskManager.on("failure", ({ id, error }) => get().updateTaskStatus(id, "error", error));
                 taskManager.on("skip", ({ id }) => get().updateTaskStatus(id, "skipped"));
-                taskManager.on("log", ({ id, log }) => get().addTaskLog(id, log));
+                taskManager.on("log", ({ id, log, data }) => get().addTaskLog(id, log, data));
+                taskManager.on("APP_REGISTERED", ({ id, data }) => get().addModule(data));
+                taskManager.on("ROUTE_REGISTERED", ({ id, data }) => get().addRoute(data));
+                taskManager.on("LISTENING", ({ id, data }) => get().startListening(data));
+                taskManager.on("ERROR", ({ id, data }) => get().addActionLog(id, data));
+                taskManager.on("REQUEST", ({ id, data }) => get().addActionLog(id, data));
+                taskManager.on("RESPONSE", ({ id, data }) => get().addActionLog(id, data));
+                taskManager.on("LOG", ({ id, data }) => get().addPinoLog(id, data));
+
 
                 await taskManager.execute();
 
                 set(() => ({ isRunning: false, currentTaskId: null }));
-
-                //await taskManager.watch();
+                await taskManager.watch();
+                set(() => ({ isWatching: true }));
             },
 
 
@@ -61,7 +76,6 @@ export const useTaskManager = create<TaskManagerStore>()(immer(
                 });
 
             },
-
             updateTaskStatus: (taskId: string, status: TaskStatus, error?: string) => {
                 set((state) => {
                     const task = state.tasks[taskId];
@@ -72,14 +86,68 @@ export const useTaskManager = create<TaskManagerStore>()(immer(
                     task.error = error || task.error;
                 });
             },
-
-            addTaskLog: (taskId: string, log: string) => {
+            addTaskLog: (taskId: string, log: string | object, data: any) => {
                 set((state) => {
                     const task = state.tasks[taskId];
                     if (!task) return state;
+                    if (data) log = { text: log, data };
                     task.logs = [...task.logs, log];
                 });
-            }
+            },
+            addModule: (module: any) => {
+                set((state) => {
+                    let modules = state.modules;
+                    if (modules.length > 0) {
+                        state.modules = [...modules, {
+                            id: `${modules.length + 1}`,
+                            name: `Module-${modules.length + 1}`,
+                            endpoints: [],
+                            data: module
+                        }]
+                        return state;
+                    }
+                    state.modules = [{
+                        id: `${1}`,
+                        name: `Module-${1}`,
+                        endpoints: [],
+                        data: module
+                    }]
+                    return state;
+                });
+            },
+            addRoute: (endpoint: any) => {
+                set((state) => {
+                    let modules = state.modules;
+                    if (modules.length < 0) {
+                        return state;
+                    }
+                    state.modules[modules.length - 1].endpoints = [...modules[modules.length - 1].endpoints, endpoint];
+                    return state;
+                });
+            },
+            addActionLog(id: string, data: any) {
+                const logs = get().logs;
+                if (logs.length >= 5) {
+                    logs.shift();
+                }
+
+                set({ logs: [...logs, data] });
+            },
+            addPinoLog: (id: string, data: any) => {
+                const logs = get().pinoLogs;
+                if (logs.length >= 5) {
+                    logs.shift();
+                }
+
+                set({ pinoLogs: [...logs, data] });
+            },
+            startListening: (data) => {
+                if (!data) return;
+                set({ isListening: true, port: data.port, host: data.host })
+            },
+            selectModule: (id: string) => set({ selectedModule: id }),
+            selectEndpoint: (endpoint: any) => set({ selectedEndpoint: endpoint }),
+            resetSelection: () => set({ selectedModule: null, selectedEndpoint: null }), // Reset both select
         }
     }));
 
@@ -132,4 +200,3 @@ export const selectProgress = () => (state: TaskManagerStore) => {
     const completedTasks = allTasks.filter(task => task.status === "completed");
     return completedTasks.length / allTasks.length;
 }
-

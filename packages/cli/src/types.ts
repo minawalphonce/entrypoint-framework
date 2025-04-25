@@ -39,7 +39,7 @@ export type TaskTitle = string | ((params: TaskParam) => string);
 export type Task = {
     title: TaskTitle;
     skip?: (params: TaskParam) => boolean;
-    action: (params: TaskParam, logger: (log: any) => void, executeSubTasks?: (params: TaskParam) => Promise<any>) => Promise<any>;
+    action: (params: TaskParam, logger: (log: any) => void, eventEmitter: (type: string, data?: any) => void, executeSubTasks?: (params: TaskParam) => Promise<any>) => Promise<any>;
     children?: Task[];
 }
 
@@ -102,6 +102,14 @@ export type Args = {
     }
 }
 
+type Module = {
+    id: string;
+    name: string;
+    endpoints: any[];
+    data?: any;
+}
+
+
 //=================================
 
 export type TaskStatus = 'pending' | 'running' | 'completed' | 'error' | 'skipped';
@@ -116,16 +124,41 @@ export interface TaskState {
     parentId?: string;
 }
 
+export interface Log {
+    url: string;
+    method: string;
+    status: number;
+    payload: any;
+    time: Date;
+}
+
 export interface TaskManagerStore {
     tasks: Record<string, TaskState>;
     currentTaskId: string | null;
     environment: string;
     isRunning: boolean;
+    isListening: boolean;
+    modules: Module[];
+    selectedModule: string | null;
+    selectedEndpoint: any | null;
+    port: string;
+    host: string;
+    logs: Array<any>; // Changed to Array<any> to allow any type of log
+    pinoLogs: Array<any>; // Changed to Array<any> to allow any type of log
 
     // Actions
     start: (config: Config, env: string) => Promise<void>;
-
     addTask: (task: { id: string, title: string, parentTaskId?: string }) => void;
     updateTaskStatus: (taskId: string, status: TaskStatus, error?: string) => void;
-    addTaskLog: (taskId: string, log: any) => void;
+    addTaskLog: (taskId: string, log: any, data: any) => void;
+    addModule: (module: Module) => void;
+    addRoute: (route: any) => void;
+    addActionLog(id: string, data: any): void;
+    addPinoLog(id: string, data: any): void;
+    startListening: ({ host, port }: { host: string, port: string }) => void;
+
+    // Navigations
+    selectModule: (id: string) => void;
+    selectEndpoint: (endpoint: any) => void;
+    resetSelection: () => void; // New action to reset selections
 }
