@@ -1,81 +1,46 @@
 import {
   FunctionContext,
-  HttpFunctionContext,
   HandlerType,
   Adapter,
   Matcher,
-  Pipe,
-  ScheduleFunctionContext
-} from "@@types"
-import { createHttpContext } from "./http/create-http-context";
-import { createScheduleContext } from "./schedule/create-schedule-context";
+  Pipe
+} from "@@types";
 
+export interface Handler {
+  matcher: Matcher;
+  createContext: (adapter: Adapter, ...args: any[]) => FunctionContext;
+  funcs: Pipe[];
+}
 
 export const createRouter = () => {
-  const _handlers: { matcher: Matcher; funcs: Pipe[] }[] = [];
+  const _handlers: Handler[] = [];
 
-  const add = (matcher: Matcher, ...funcs: Pipe[]) => {
-    _handlers.push({
-      matcher,
-      funcs
-    });
+  const add = (handler: Handler) => {
+    _handlers.push(handler);
   };
 
-  const run = async (
-    handlerType: HandlerType,
-    adapter?: Adapter,
-    ...args: any[]
-  ) => {
-    let context: FunctionContext = null;
-
-    switch (handlerType) {
-      case "Http":
-        const [httpRequest, auth] = adapter.input(...args);
-        context = createHttpContext(httpRequest, auth);
-        break;
-      case "Schedule":
-        const [scheduleRequest] = adapter.input(...args);
-        context = createScheduleContext(scheduleRequest);
-        break;
-      // case "Event":
-      //   //TODO: createEventContext
-      //   break;
-      // case "File":
-      //   //TODO: creatFileContext
-      //   break;
-    }
-
-
-    // Get first matching handler
-    const matchedHandler = _handlers.find((handler) =>
-      handler.matcher(context)
-    );
+  const run = async (handlerType: HandlerType, adapter?: Adapter, ...args: any[]) => {
+    const matchedHandler = _handlers.find((handler) => handler.matcher(handlerType));
 
     if (!matchedHandler) {
-      // No handler found
-      await context.notFound();
+      throw new Error(`No handler found for handler type: ${handlerType}`);
     }
-    else {
-      // Execute each pipe in the matched handler
-      for (let idx = 0; idx < matchedHandler.funcs.length; idx += 1) {
-        try {
-          await matchedHandler.funcs[idx](context);
-        } catch (error) {
-          await context.error();
-        }
+
+    const context = matchedHandler.createContext(adapter, ...args);
+
+    for (let idx = 0; idx < matchedHandler.funcs.length; idx++) {
+      try {
+        await matchedHandler.funcs[idx](context);
+      } catch (error) {
+        await context.error();
       }
     }
 
-    if (handlerType === "Http") {
-      return adapter.output((context as HttpFunctionContext).response);
-    } else if (handlerType === "Schedule") {
-      const scheduleContext = context as ScheduleFunctionContext;
-      return scheduleContext.output(200, "");
-    }
+    return context.output();
   };
 
   return {
     add,
-    run
+    run,
   };
 };

@@ -15,11 +15,19 @@ type AWSEventType = S3Event | APIGatewayProxyEventV2WithJWTAuthorizer | Schedule
 const router = createRouter();
 <%_ for(var [key,entry] of Object.entries(entries)) { _%>
     <%_ if(entry.trigger.type.toLowerCase() === "http") { _%>
-router.add(httpMatcher("<%=entry.trigger.options.method%>", "<%=entry.trigger.options.route%>"), src["<%= entry.handler %>"])
-    <%_ } _%>
-    <%_ if(entry.trigger.type.toLowerCase() === "schedule") { _%>
-router.add(scheduleMatcher("<%= key %>"), src["<%= entry.handler %>"])
-    <%_ } _%>
+        router.add({
+            matcher: httpMatcher("<%=entry.trigger.options.method%>", "<%=entry.trigger.options.route%>"),
+            createContext: functions.httpAdapter.input,
+            funcs: [src["<%= entry.handler %>"]]
+        });
+            <%_ } _%>
+            <%_ if(entry.trigger.type.toLowerCase() === "schedule") { _%>
+        router.add({
+            matcher: scheduleMatcher("<%= key %>"),
+            createContext: functions.scheduleAdapter.input,
+            funcs: [src["<%= entry.handler %>"]]
+        });
+            <%_ } _%>
 <%_ } _%>
 
 export async function handler(event: AWSEventType, context: Context) {
