@@ -3,13 +3,12 @@ import {
   HandlerType,
   Adapter,
   Matcher,
-  Pipe
 } from "@@types";
 
 export interface Handler {
   matcher: Matcher;
   createContext: (adapter: Adapter, ...args: any[]) => FunctionContext;
-  funcs: Pipe[];
+  func: (context: FunctionContext) => void | Promise<void>;
 }
 
 export const createRouter = () => {
@@ -28,12 +27,10 @@ export const createRouter = () => {
 
     const context = matchedHandler.createContext(adapter, ...args);
 
-    for (let idx = 0; idx < matchedHandler.funcs.length; idx++) {
-      try {
-        await matchedHandler.funcs[idx](context);
-      } catch (error) {
-        await context.error();
-      }
+    try {
+      await matchedHandler.func(context);
+    } catch (error) {
+      await context.error();
     }
 
     return context.output();

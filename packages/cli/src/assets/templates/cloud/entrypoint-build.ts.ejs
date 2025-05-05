@@ -18,14 +18,14 @@ const router = createRouter();
         router.add({
             matcher: httpMatcher("<%=entry.trigger.options.method%>", "<%=entry.trigger.options.route%>"),
             createContext: functions.httpAdapter.input,
-            funcs: [src["<%= entry.handler %>"]]
+            func: src["<%= entry.handler %>"]
         });
             <%_ } _%>
             <%_ if(entry.trigger.type.toLowerCase() === "schedule") { _%>
         router.add({
             matcher: scheduleMatcher("<%= key %>"),
             createContext: functions.scheduleAdapter.input,
-            funcs: [src["<%= entry.handler %>"]]
+            func: src["<%= entry.handler %>"]
         });
             <%_ } _%>
 <%_ } _%>
@@ -37,21 +37,18 @@ export async function handler(event: AWSEventType, context: Context) {
 
     try {
         await initialize();
-        let output = null;
-        if ("rawPath" in event) {
-            output = await router.run("Http", functions.httpAdapter, event, context);
+        const handlerType = "rawPath" in event ? "Http" : "source" in event ? "Schedule" : null;
+
+        if (!handlerType) {
+            throw new Error("Invalid handler type");
         }
-        else if ("source" in event) {
-            output = await router.run("Schedule", functions.scheduleAdapter, event, context);
-        }
-        else {
-            throw new Error("invalid handler");
-        }
+
+        const output = await router.run(handlerType, functions[`${handlerType.toLowerCase()}Adapter`], event, context);
+
         logger.debug({ output }, "Response Sent");
         logger.info("request completed");
         return output;
-    }
-    catch (error) {
+    } catch (error) {
         logger.error({ error }, "Error occurred");
         throw error;
     }
