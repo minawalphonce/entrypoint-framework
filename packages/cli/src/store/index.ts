@@ -30,7 +30,7 @@ export const useTaskManager = create<TaskManagerStore>()(immer(
                 taskManager.on("failure", ({ id, error }) => get().updateTaskStatus(id, "error", error));
                 taskManager.on("skip", ({ id }) => get().updateTaskStatus(id, "skipped"));
                 taskManager.on("log", ({ id, log, data }) => get().addTaskLog(id, log, data));
-                taskManager.on("APP_REGISTERED", ({ id, data }) => get().addModule(data));
+                taskManager.on("APP_REGISTERED", ({ id, prefix, data }) => get().addModule(id, prefix, data));
                 taskManager.on("ROUTE_REGISTERED", ({ id, data }) => get().addRoute(data));
                 taskManager.on("LISTENING", ({ id, data }) => get().startListening(data));
                 taskManager.on("ERROR", ({ id, data }) => get().addActionLog(id, data));
@@ -94,23 +94,23 @@ export const useTaskManager = create<TaskManagerStore>()(immer(
                     task.logs = [...task.logs, log];
                 });
             },
-            addModule: (module: any) => {
+            addModule: (id: string, prefix: string, opts: any) => {
                 set((state) => {
                     let modules = state.modules;
                     if (modules.length > 0) {
                         state.modules = [...modules, {
-                            id: `${modules.length + 1}`,
-                            name: `Module-${modules.length + 1}`,
+                            id: id,
+                            name: prefix,
                             endpoints: [],
-                            data: module
+                            data: opts
                         }]
                         return state;
                     }
                     state.modules = [{
-                        id: `${1}`,
-                        name: `Module-${1}`,
+                        id: id,
+                        name: prefix,
                         endpoints: [],
-                        data: module
+                        data: opts
                     }]
                     return state;
                 });

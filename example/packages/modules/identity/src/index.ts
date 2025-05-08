@@ -3,12 +3,12 @@ import { HttpFunctionContext } from "@@cloudecore";
 export function getMe(ctx: HttpFunctionContext) {
 
     ctx.success({
-        message: 'Hello from module2 -> getMe'
+        message: 'Hello from identity -> getMe'
     });
 }
 
 export function setMe(ctx: HttpFunctionContext) {
-    console.info('getMe from module2');
+    console.info('getMe from identity -> setMe', ctx.params, ctx.request.body);
     ctx.error({
         msg: 'Error from module2 -> SetMe'
     });
