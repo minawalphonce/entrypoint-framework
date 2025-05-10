@@ -15,6 +15,7 @@
 		"link": "yarn link"
 	},
 	"files": [
+		".deploy",
 		"dist",
 		"pakage.json",
 		"README.md"

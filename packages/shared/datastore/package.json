@@ -1,0 +1,17 @@
+{
+  "name": "@entrypoint-framework/datastore",
+  "version": "1.0.0",
+  "main": "src/index.ts",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "@entrypoint-framework/utils": "1.0.0",
+    "typeorm": "^0.3.16",
+    "date-fns": "^4.1.0",
+    "lodash": "^4.17.21",
+    "mysql2": "^3.6.0"
+  },
+  "devDependencies": {
+    "sqlite3": "^5.1.6"
+  }
+}

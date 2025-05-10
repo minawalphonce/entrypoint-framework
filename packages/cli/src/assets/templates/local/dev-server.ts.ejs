@@ -51,7 +51,7 @@ const fastify = Fastify({
 
 // Add fastify hooks
 fastify.addHook('onRegister', async (instance, opts) => {
-    sendMessage("APP_REGISTERED", { instance: instance.data, opts });
+    sendMessage("APP_REGISTERED", { prefix: instance.prefix, opts });
 });
 
 fastify.addHook('onRoute', (routeOptions) => {
@@ -98,7 +98,7 @@ fastify.register(require('fastify-raw-body'), {
 });
 
 <%_ for(const module of moduleNames){ _%>
-fastify.register(<%=module%>Entries, { prefix: "api" });
+fastify.register(<%=module%>Entries, { prefix: "<%=module%>/" });
 <%_ } _%>
 
 fastify.listen({ port: 3000, host : "::" }).then((address) => {

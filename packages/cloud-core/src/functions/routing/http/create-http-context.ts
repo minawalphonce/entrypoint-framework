@@ -1,5 +1,4 @@
 import * as querystring from "node:querystring";
-
 import {
   HTTPAuth,
   HTTPRequest,
@@ -17,6 +16,7 @@ export function createHttpContext(
     headers: {},
     status: HttpStatusCode.OK
   };
+
   const output = (status: number, body?: string, headers?: any) => {
     response.status = status;
     response.headers = {
@@ -28,11 +28,11 @@ export function createHttpContext(
 
   return {
     type: "Http",
-    request: request,
-    auth: auth,
-    response: response,
+    request,
+    auth,
+    response,
     model<T = Record<string, any>>() {
-      return JSON.parse(request.body || "{}") as T
+      return JSON.parse(request.body || "{}") as T;
     },
     params<T = Record<string, string>>() {
       return {
@@ -40,7 +40,7 @@ export function createHttpContext(
         ...querystring.parse(request.rawQueryString || ""),
       } as T;
     },
-    output: output,
+    output: () => response,
     success(body) {
       if (body)
         return output(HttpStatusCode.OK, JSON.stringify(body), {

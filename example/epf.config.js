@@ -7,8 +7,5 @@ export default {
         "staging": {
             "tasks": []
         },
-        "production": {
-            "tasks": []
-        }
     }
 }

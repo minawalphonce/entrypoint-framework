@@ -32,6 +32,8 @@ export const devServerWatch: Task = {
                 options.alias = {
                     "@@cloudecore": "@entrypoint-framework/cloud-core",
                     "@@cloud": mapCloud(cloudProvider),
+                    "@@datastore": "@entrypoint-framework/datastore",
+                    "@@utils": "@entrypoint-framework/utils",
                 }
                 return options;
             },
