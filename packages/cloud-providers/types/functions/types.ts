@@ -133,6 +133,14 @@ export type FunctionContext = {
    * @returns A promise that resolves when the response is created, or void if not using a promise.
    */
   notFound(body?: any): Promise<void> | void;
+
+  /**
+   * Creates an accepted response. This should be called when the request is accepted but not yet processed.
+   * @param body - The response body.
+   * @returns A promise that resolves when the response is created, or void if not using a promise.
+   */
+  output(): { status: number; body?: any };
+
 };
 
 /**
@@ -159,16 +167,9 @@ export type HttpFunctionContext = FunctionContext & {
 
   /**
    * Sends an HTTP response with the specified status, body, and headers.
-   * @param status - The HTTP status code.
-   * @param body - The response body.
-   * @param headers - The response headers.
    * @returns A promise that resolves when the response is sent, or void if no promise is returned.
    */
-  output(
-    status: number,
-    body?: string,
-    headers?: Record<string, string>
-  ): Promise<void> | void;
+  output(): HTTPResponse;
 
   /**
    * Sends a success HTTP 200 response with an optional body.
@@ -204,16 +205,25 @@ export type HttpFunctionContext = FunctionContext & {
    * @returns A promise that resolves when the response is sent, or void if no promise is returned.
    */
   notFound(body?: any): Promise<void> | void;
+
+  /**
+  * Sends an HTTP response with the specified status and body.
+   * @param status - The HTTP status code.
+   * @param body - The response body.
+   * @returns The HTTP response object.
+   * */
+  output(): HTTPResponse;
 };
 
 export type ScheduleFunctionContext = FunctionContext & {
   request: ScheduleRequest;
   type: "Schedule";
 
-  output(
-    status: number,
-    body?: string,
-  ): Promise<void> | void;
+  output(): { status: number; body: any };
+
+  success(body?: any): void;
+  error(body?: any): void;
+  notFound(body?: any): void;
 };
 
 //#endregion

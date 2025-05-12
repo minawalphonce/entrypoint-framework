@@ -1,0 +1,11 @@
+{
+    "compilerOptions": {
+        "composite": true,
+        "tsBuildInfoFile": "../../../.develop/datastore/tsconfig.tsbuildinfo"
+    },
+    "extends": "../../../tsconfig.json",
+    "include": [
+        "src/**/*.ts",
+        "../../../types/**/*.d.ts"
+    ],
+}

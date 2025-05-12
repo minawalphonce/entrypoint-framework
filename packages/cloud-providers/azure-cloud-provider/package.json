@@ -1,5 +1,5 @@
 {
-  "name": "@anubis/azure-cloud-provider",
+  "name": "@entrypoint-framework/azure-cloud-provider",
   "version": "1.0.0",
   "main": "index.ts",
   "license": "MIT",

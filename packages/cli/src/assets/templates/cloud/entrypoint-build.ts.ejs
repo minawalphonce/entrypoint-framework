@@ -3,23 +3,31 @@ import { Context, S3Event,
          ScheduledEvent
 } from "aws-lambda";
 
-import { createRouter, httpMatcher, scheduleMatcher } from "@anubis/cloud-provider";
-import { functions } from "@anubis/aws-cloud-provider";
-import { initialize } from "@anubis/datastore";
-import { logger } from "@anubis/utils";
+import { createRouter, httpMatcher, scheduleMatcher } from "@@cloudcore";
+import { functions } from "@@cloud";
+import { initialize } from "@@datastore";
+import { logger } from "@@utils";
 
-import * as src from "../../packages/components/<%=component%>/src";
+import * as src from "../../../packages/modules/<%=module%>/src";
 
 type AWSEventType = S3Event | APIGatewayProxyEventV2WithJWTAuthorizer | ScheduledEvent;
 
 const router = createRouter();
 <%_ for(var [key,entry] of Object.entries(entries)) { _%>
     <%_ if(entry.trigger.type.toLowerCase() === "http") { _%>
-router.add(httpMatcher("<%=entry.trigger.options.method%>", "<%=entry.trigger.options.route%>"), src["<%= entry.handler %>"])
-    <%_ } _%>
-    <%_ if(entry.trigger.type.toLowerCase() === "schedule") { _%>
-router.add(scheduleMatcher("<%= key %>"), src["<%= entry.handler %>"])
-    <%_ } _%>
+        router.add({
+            matcher: httpMatcher("<%=entry.trigger.options.method%>", "<%=entry.trigger.options.route%>"),
+            createContext: functions.httpAdapter.input,
+            func: src["<%= entry.handler %>"]
+        });
+            <%_ } _%>
+            <%_ if(entry.trigger.type.toLowerCase() === "schedule") { _%>
+        router.add({
+            matcher: scheduleMatcher("<%= key %>"),
+            createContext: functions.scheduleAdapter.input,
+            func: src["<%= entry.handler %>"]
+        });
+            <%_ } _%>
 <%_ } _%>
 
 export async function handler(event: AWSEventType, context: Context) {
@@ -29,21 +37,18 @@ export async function handler(event: AWSEventType, context: Context) {
 
     try {
         await initialize();
-        let output = null;
-        if ("rawPath" in event) {
-            output = await router.run("Http", functions.httpAdapter, event, context);
+        const handlerType = "rawPath" in event ? "Http" : "source" in event ? "Schedule" : null;
+
+        if (!handlerType) {
+            throw new Error("Invalid handler type");
         }
-        else if ("source" in event) {
-            output = await router.run("Schedule", functions.scheduleAdapter, event, context);
-        }
-        else {
-            throw new Error("invalid handler");
-        }
+
+        const output = await router.run(handlerType, functions[`${handlerType.toLowerCase()}Adapter`], event, context);
+
         logger.debug({ output }, "Response Sent");
         logger.info("request completed");
         return output;
-    }
-    catch (error) {
+    } catch (error) {
         logger.error({ error }, "Error occurred");
         throw error;
     }

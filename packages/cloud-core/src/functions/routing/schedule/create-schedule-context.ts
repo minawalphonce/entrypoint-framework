@@ -1,11 +1,9 @@
 import { ScheduleFunctionContext, ScheduleRequest } from "@@types";
 
-
-//TODO: add logging for notFound.
 export function createScheduleContext(request: ScheduleRequest): ScheduleFunctionContext {
     const result = {
         status: 200,
-        body: null as any
+        body: null as any,
     };
 
     const output = (status: number, body?: any): void => {
@@ -16,20 +14,15 @@ export function createScheduleContext(request: ScheduleRequest): ScheduleFunctio
     return {
         type: "Schedule",
         request,
-
         success: (body?: any) => {
-            result.status = 200;
-            result.body = body;
+            output(200, body);
         },
-
         error: (body?: any) => {
-            result.status = 500;
-            result.body = body;
+            output(500, body || "Internal Server Error");
         },
         notFound: (body?: any) => {
-            result.status = 404;
-            result.body = body;
+            output(404, body || "Resource Not Found");
         },
-        output: output
-    }
+        output: () => result,
+    };
 }
