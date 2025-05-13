@@ -6,9 +6,8 @@ import {
     locateModules,
     transformDevServer,
     devServerWatch,
-    transformModule,
     loadTriggerTemplate,
-    transformTriggerTemplate,
+    transferTerraformModules
 } from "../task-manager/index.js";
 
 
@@ -35,6 +34,7 @@ export const defaultConfig: Config = {
                 loadModuleTemplate,
                 loadTriggerTemplate,
                 locateModules,
+                transferTerraformModules,
             ],
             cloudProvider: {
                 type: "aws",

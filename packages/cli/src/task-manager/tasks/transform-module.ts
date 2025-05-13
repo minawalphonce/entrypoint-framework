@@ -11,11 +11,11 @@ const helpers = {
 
 /**
  * convert the module template into a compilable function 
- * @param {string} moduleTemplatePath
+ * @param {string} moduleTemplateFunc
  * @returns {function} moduleTemplate
  */
 export const transformModule: Task = {
-    title: ({ moduleName }) => `transform module ${moduleName}`,
+    title: ({ moduleName }) => `Transform module ${moduleName}`,
     skip: () => false,
     action: async ({
         moduleTemplateFunc,
