@@ -1,4 +1,4 @@
-import { HttpFunctionContext } from "@@cloudecore";
+import { HttpFunctionContext } from "@@cloudcore";
 
 export function getMe(ctx: HttpFunctionContext) {
 

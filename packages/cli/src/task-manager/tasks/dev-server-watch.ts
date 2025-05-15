@@ -30,7 +30,7 @@ export const devServerWatch: Task = {
             esbuildOptions: (options) => {
                 options.absWorkingDir = workingDir;
                 options.alias = {
-                    "@@cloudecore": "@entrypoint-framework/cloud-core",
+                    "@@cloudcore": "@entrypoint-framework/cloud-core",
                     "@@cloud": mapCloud(cloudProvider),
                     "@@datastore": "@entrypoint-framework/datastore",
                     "@@utils": "@entrypoint-framework/utils",

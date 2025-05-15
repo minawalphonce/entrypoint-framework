@@ -2,7 +2,7 @@ import Fastify from "fastify";
 import pino from "pino";
 
 <%_ for(const module of moduleNames){ _%>
-import <%=module%>Entries from "./<%=module%>/entrypoint.ts"  
+import <%=module%>Entries from "./<%=module%>/index.ts"  
 <%_ } _%>
 
 // Create a custom logger
