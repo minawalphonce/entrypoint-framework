@@ -3,6 +3,7 @@ export default {
     "cloudProvider": "aws",
     "modulesPath": "./packages/modules/**/entrypoint.json",
     "workingDir": "./.epf",
+    "externalPackages":["sqlite3", "pino", "aws-sdk", "@aws-sdk/*"],
     "environments": {
         "staging": {
             "tasks": []

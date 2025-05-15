@@ -7,3 +7,4 @@ export * from "./dev-server-watch.js";
 export * from "./load-trigger-template.js";
 export * from "./transform-trigger-template.js";
 export * from "./transfer-terraform-module.js";
+export * from "./build-server.js";
