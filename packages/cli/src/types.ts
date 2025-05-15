@@ -90,6 +90,12 @@ export type Config = {
      * @default { develop: { tasks: [] }, prod: { tasks: [] } }
      */
     environments: Record<string, Environment>
+
+    /**
+     * External packages to be used in the module build
+     * @default: ["aws-sdk", "@aws-sdk/*"]
+     */
+    externalPackages: string[],
 }
 
 export type Args = {
@@ -151,7 +157,7 @@ export interface TaskManagerStore {
     addTask: (task: { id: string, title: string, parentTaskId?: string }) => void;
     updateTaskStatus: (taskId: string, status: TaskStatus, error?: string) => void;
     addTaskLog: (taskId: string, log: any, data: any) => void;
-    addModule: (id: string, prefix: string, opts: any) => void;
+    addModule: (id: string, opts: any) => void;
     addRoute: (route: any) => void;
     addActionLog(id: string, data: any): void;
     addPinoLog(id: string, data: any): void;

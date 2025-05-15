@@ -5,6 +5,8 @@ import { Task } from "../../types.js";
 import { transformModule } from "./transform-module.js";
 import { locateSourceEntry } from "./locate-source-entry.js";
 import { transformTriggerTemplate } from "./transform-trigger-template.js";
+import { buildServer } from "./build-server.js";
+
 /**
  * identify the module entry point paths
  * @param {string} modulesPath
@@ -37,6 +39,7 @@ export const locateModules: Task = {
     children: [
         locateSourceEntry,
         transformModule,
-        transformTriggerTemplate
+        transformTriggerTemplate,
+        buildServer
     ]
 }

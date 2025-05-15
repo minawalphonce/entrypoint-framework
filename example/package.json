@@ -18,6 +18,9 @@
     },
     "scripts": {
         "start": "epf develop",
-        "build": "epf production"
+        "build": "epf production",
+        "plan": "terraform plan",
+        "deploy": "terraform apply",
+        "destroy": "terraform destroy"
     }
 }

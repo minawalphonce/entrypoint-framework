@@ -11,11 +11,11 @@ const helpers = {
 
 /**
  * convert the module template into a compilable function 
- * @param {string} moduleTemplatePath
+ * @param {string} moduleTemplateFunc
  * @returns {function} moduleTemplate
  */
 export const transformModule: Task = {
-    title: ({ moduleName }) => `transform module ${moduleName}`,
+    title: ({ moduleName }) => `Transform module ${moduleName}`,
     skip: () => false,
     action: async ({
         moduleTemplateFunc,
@@ -35,6 +35,9 @@ export const transformModule: Task = {
         // if folder does not exist, create it
         const moduleDir = path.join(workingDir, moduleName);
         await fs.mkdir(moduleDir, { recursive: true });
-        await fs.writeFile(path.join(moduleDir, `entrypoint.ts`), rendered, "utf-8");
+        await fs.writeFile(path.join(moduleDir, `index.ts`), rendered, "utf-8");
+        return {
+            moduleDir
+        }
     }
 }

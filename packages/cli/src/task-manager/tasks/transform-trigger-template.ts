@@ -4,12 +4,15 @@ import path from "node:path";
 import { Task } from "../../types.js";
 
 /**
- * convert the module template into a compilable function 
- * @param {string} triggerTemplateFunc
- * @returns {function} moduleTerraformTemplate
+ * convert the module trigger template into a compilable function 
+ * @param {string} triggerTemplatePath
+ * @param {string} entrypointPath
+ * @param {string} moduleName
+ * @param {string} workingDir
+ * @param {string} source
  */
 export const transformTriggerTemplate: Task = {
-    title: ({ moduleName }) => `transform terraform trigger ${moduleName}`,
+    title: ({ moduleName }) => `Transform terraform trigger ${moduleName}`,
     skip: (params) => {
         return params.environment === "develop";
     },

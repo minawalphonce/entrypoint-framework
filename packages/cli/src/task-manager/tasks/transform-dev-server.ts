@@ -5,11 +5,12 @@ import { Task } from "../../types.js";
 
 /**
  * convert the module template into a compilable function 
+ * @param {string} moduleNames
  * @param {string} devServerTemplateFunc
- * @returns {function} moduleTemplate
+ * @param {string} workingDir
  */
 export const transformDevServer: Task = {
-    title: `transform Dev Server`,
+    title: `Transform Dev Server`,
     skip: () => false,
     action: async ({
         moduleNames,
