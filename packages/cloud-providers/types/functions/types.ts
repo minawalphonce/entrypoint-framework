@@ -232,11 +232,11 @@ export type ScheduleFunctionContext = FunctionContext & {
 //#region [ router ]
 
 export type Adapter = {
-  input: (...args: any[]) => any[];
+  input: (...args: any[]) => any;
   output: (output: HTTPResponse) => any;
 };
 
-export type Matcher = (...args: any[]) => boolean;
+export type Matcher = (handlerType: HandlerType, ...args: any[]) => boolean;
 
 //#endregion
 

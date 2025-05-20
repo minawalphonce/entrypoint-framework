@@ -17,7 +17,7 @@ function mapCloud(provider: string) {
 }
 
 export const buildServer: Task = {
-    title: 'Build Server',
+    title: ({ moduleName }) => `Build Server for ${moduleName}`,
     skip: (params) => {
         return params.environment === "develop";
     },
@@ -29,6 +29,7 @@ export const buildServer: Task = {
                 index: modulePath,
             },
             external: [...externalPackages],
+            noExternal: ['lodash'],
             esbuildOptions: (options) => {
                 options.absWorkingDir = moduleDir;
                 options.alias = {
@@ -40,14 +41,13 @@ export const buildServer: Task = {
                 return options;
             },
             bundle: true,
-            sourcemap: true,
+            sourcemap: false,
             outDir: moduleDir,
             platform: "node",
             dts: false,
             watch: false,
-            env: {
-                __ENV_PATH__: '"' + path.resolve(__dirname, "../.env").replace(/\\/g, "\\\\") + '"',
-                __PROD__: process.env.__PROD__ || '"production"'
+            define: {
+                __DEV__: process.env.__DEV__ || "false",
             },
             esbuildPlugins: [],
         });

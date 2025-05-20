@@ -1,7 +1,6 @@
 import { HttpFunctionContext } from "@@cloudcore";
 
 export function getMe(ctx: HttpFunctionContext) {
-
     ctx.success({
         message: 'Hello from identity -> getMe'
     });

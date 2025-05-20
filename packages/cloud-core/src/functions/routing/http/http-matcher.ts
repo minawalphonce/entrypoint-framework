@@ -1,18 +1,20 @@
-import { FunctionContext, HttpMethod, HttpFunctionContext } from "@@types"
+import { HttpMethod } from "@@types"
 
 export const httpMatcher = (method: HttpMethod, urlPattern: string) =>
-    (context: FunctionContext) => {
+    (handlerType: string, event?: any) => {
         // Is HTTP Context present
-        if (context.type != "Http")
+        if (handlerType != "Http")
             return false;
-
-        const httpContext = context as HttpFunctionContext;
 
         // Does Method match
-        const { method: requestMethod, matchingKey } = httpContext.request;
-        if (method.toLowerCase() !== requestMethod.toLowerCase()) {
+        const requestMethod = event?.requestContext?.http?.method;
+        const matchingKey = event?.rawPath;
+
+        if (!requestMethod || !matchingKey) {
             return false;
         }
-
-        return urlPattern.toLowerCase() === matchingKey.toLowerCase();
+        return (
+            method.toLowerCase() === requestMethod.toLowerCase() &&
+            urlPattern.toLowerCase() === matchingKey.toLowerCase()
+        );
     };
