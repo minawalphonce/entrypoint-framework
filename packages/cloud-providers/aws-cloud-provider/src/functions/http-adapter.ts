@@ -1,11 +1,12 @@
 import { APIGatewayProxyEventV2WithJWTAuthorizer, APIGatewayProxyResultV2, Context } from "aws-lambda";
 import { Adapter, HTTPRequest, HTTPAuth, HttpMethod } from "@@types";
+import { createHttpContext } from "@@cloudcore";
 
 import { decode } from "../utils/token";
 
 export const httpAdapter: Adapter = {
     input: (...args) => {
-        const [event, ctx] = args as [APIGatewayProxyEventV2WithJWTAuthorizer, Context];
+        const [_, event, ctx] = args as [any, APIGatewayProxyEventV2WithJWTAuthorizer, Context];
         let request: HTTPRequest = {
             body: event.body,
             headers: event.headers,
@@ -31,7 +32,7 @@ export const httpAdapter: Adapter = {
                 identity: jwtClaims["identity"] as HTTPAuth["identity"],
             };
         }
-        return [request, auth];
+        return createHttpContext(request, auth);;
     },
     output: (response) => {
         if (500 <= response.status && response.status < 600) {

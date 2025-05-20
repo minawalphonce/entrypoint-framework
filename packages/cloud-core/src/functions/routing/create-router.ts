@@ -19,14 +19,16 @@ export const createRouter = () => {
   };
 
   const run = async (handlerType: HandlerType, adapter?: Adapter, ...args: any[]) => {
-    const matchedHandler = _handlers.find((handler) => handler.matcher(handlerType));
+    let i = 0;
+    const matchedHandler = _handlers.find((handler) => {
+      return handler.matcher(handlerType, ...args);
+    });
 
     if (!matchedHandler) {
       throw new Error(`No handler found for handler type: ${handlerType}`);
     }
 
     const context = matchedHandler.createContext(adapter, ...args);
-
     try {
       await matchedHandler.func(context);
     } catch (error) {

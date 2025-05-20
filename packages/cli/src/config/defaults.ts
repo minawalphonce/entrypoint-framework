@@ -6,9 +6,8 @@ import {
     locateModules,
     transformDevServer,
     devServerWatch,
-    transformModule,
     loadTriggerTemplate,
-    transformTriggerTemplate,
+    transferTerraformModules
 } from "../task-manager/index.js";
 
 
@@ -20,6 +19,7 @@ export const defaultConfig: Config = {
         develop: {
             moduleTemplatePath: "./templates/local/module.ts.ejs",
             devServerTemplatePath: "./templates/local/dev-server.ts.ejs",
+            externalPackages: ["sqlite3", "pino"],
             tasks: [
                 loadModuleTemplate,
                 loadDevServerTemplate,
@@ -31,10 +31,12 @@ export const defaultConfig: Config = {
         production: {
             moduleTemplatePath: "./templates/cloud/entrypoint-build.ts.ejs",
             triggerTemplatePath: "./templates/cloud/entrypoint-triggers.tf.ejs",
+            externalPackages: ["aws-sdk", "@aws-sdk/*"],
             tasks: [
                 loadModuleTemplate,
                 loadTriggerTemplate,
                 locateModules,
+                transferTerraformModules,
             ],
             cloudProvider: {
                 type: "aws",

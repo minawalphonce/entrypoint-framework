@@ -26,7 +26,7 @@ async function initialize() {
             createGlobalHelpers(repositories);
         }
     } catch (error) {
-        logger.fatal(error);
+        logger.error(error);
         throw error;
     }
 }

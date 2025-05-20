@@ -13,7 +13,9 @@
   "scripts": {
     "cli": "yarn workspace @entrypoint-framework/cli",
     "core": "yarn workspace @entrypoint-framework/cloud-core",
-    "aws": "yarn workspace @entrypoint-framework/aws-cloud-provider"
+    "aws": "yarn workspace @entrypoint-framework/aws-cloud-provider",
+    "datastore": "yarn workspace @entrypoint-framework/datastore",
+    "utils": "yarn workspace @entrypoint-framework/utils"
   },
   "dependencies": {}
 }

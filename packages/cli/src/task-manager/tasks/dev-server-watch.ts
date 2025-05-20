@@ -1,5 +1,5 @@
 import path from "node:path";
-import { ChildProcess, fork } from "node:child_process";
+import { fork } from "node:child_process";
 import tsup from "tsup";
 
 import { Task } from "../../types.js";
@@ -20,17 +20,17 @@ function mapCloud(provider: string) {
 export const devServerWatch: Task = {
     title: 'Dev Server Watch',
     skip: () => false,
-    action: async ({ workingDir, cloudProvider, ...rest }, logger, eventEmitter) => {
+    action: async ({ workingDir, cloudProvider, externalPackages, ...rest }, logger, eventEmitter) => {
         const entryPath = path.resolve(workingDir, "app.ts");
         await tsup.build({
             entry: {
                 index: entryPath
             },
-            external: ["sqlite3", "pino"],
+            external: [...externalPackages],
             esbuildOptions: (options) => {
                 options.absWorkingDir = workingDir;
                 options.alias = {
-                    "@@cloudecore": "@entrypoint-framework/cloud-core",
+                    "@@cloudcore": "@entrypoint-framework/cloud-core",
                     "@@cloud": mapCloud(cloudProvider),
                     "@@datastore": "@entrypoint-framework/datastore",
                     "@@utils": "@entrypoint-framework/utils",
@@ -74,7 +74,7 @@ function startModule(main: any, execArgv: any, logger: any, eventEmitter: (type:
     child.on('message', (message: { type: string; payload: any }) => {
         switch (message.type) {
             case 'ERROR':
-                // logger('Error:', message.data);
+                logger('Error:', message.payload);
                 eventEmitter(message.type, message.payload);
                 break;
             case 'APP_REGISTERED':
@@ -97,7 +97,7 @@ function startModule(main: any, execArgv: any, logger: any, eventEmitter: (type:
             case 'log':
                 eventEmitter(message.type, message.payload);
             default:
-                // logger('Unknown message:', message);
+                logger('Unknown message:', message);
                 break;
         }
     });
@@ -117,14 +117,11 @@ function startServerPlugin(logger: any, eventEmitter: (type: string, data?: any)
     return {
         name: "start servers",
         setup(build: any) {
-            // console.log("Build===>", build)
             /** @type ChildProcess  */
             let child: any;
             const { outdir, logLevel } = build.initialOptions;
             console.log(outdir, logLevel);
             const main = path.resolve(outdir, "index.cjs");
-            // console.log(main);
-            // // const verbose = logLevel === "info" ? true : false;
             build.onEnd(async function ({ errors }: any) {
                 if (child) {
                     child.kill("SIGINT");
@@ -134,8 +131,6 @@ function startServerPlugin(logger: any, eventEmitter: (type: string, data?: any)
                 }
 
                 if (errors && errors.length > 0) return;
-
-                // if (verbose) console.info(`Starting module '${main}'`);
                 child = startModule(main, ["--enable-source-maps"], logger, eventEmitter);
             });
         },
