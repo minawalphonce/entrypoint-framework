@@ -1,20 +1,19 @@
-import { FunctionContext, ScheduleFunctionContext } from "@@types"
+import { FunctionContext, HandlerType, ScheduleFunctionContext } from "@@types"
 
 export const scheduleMatcher = (name: string) =>
-    (context: FunctionContext) => {
-        // Is HTTP Context present
-        if (context.type !== "Schedule")
+    (handlerType: HandlerType, event?: any) => {
+        // Ensure the handler type is "Schedule"
+        if (handlerType !== "Schedule")
             return false;
 
-        const scheduleContext = context as ScheduleFunctionContext;
+        // Ensure the event contains the schedule name
+        const scheduleName = event?.source === "aws.events" ? event?.resources?.[0]?.split("/").pop() : null;
 
-        // Does Method match
-        if (
-            name.toLowerCase() !==
-            scheduleContext.request.name.toLowerCase())
+        if (!scheduleName) {
             return false;
+        }
 
-        // It does match, return true
-        // set the match object as params
-        return true;
+        // Check if the schedule name matches
+        return name.toLowerCase() === scheduleName.toLowerCase();
+
     };
