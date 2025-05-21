@@ -5,6 +5,7 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "link": "yarn link"
+    "link": "yarn link",
+    "build": "tsup && chmod +x dist/core.js"
   }
 }
